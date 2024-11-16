@@ -30,7 +30,7 @@ class Trainer(object):
         null_mask[null_mask != 0] = 1
 
         # Calculate the loss
-        loss = (torch.nn.functional.cross_entropy(predictions.permute(0,2,1), labels, reduction='none')*null_mask).sum() / null_mask.sum()
+        loss = (torch.nn.functional.cross_entropy(predictions.permute(0,2,1), labels, reduction='none')*null_mask).mean()
 
         return loss
     

@@ -42,7 +42,7 @@ class AttentionLayer(nn.Module):
             # Think about what inputs make softmax 0.
             additive_mask = torch.zeros(attn_mask.shape)
             additive_mask = additive_mask.masked_fill(attn_mask, -torch.inf)
-            dot_product += additive_mask
+            dot_product += additive_mask.to(dot_product.device)
         
         # apply softmax, dropout, and use value
         y = self.dropout(F.softmax(dot_product / math.sqrt(D), dim=-1)) @ value
@@ -83,7 +83,7 @@ class MultiHeadAttentionLayer(AttentionLayer):
             # Think about what inputs make softmax 0.
             additive_mask = torch.zeros(attn_mask.shape)
             additive_mask = additive_mask.masked_fill(attn_mask, -torch.inf)
-            dot_product += additive_mask
+            dot_product += additive_mask.to(dot_product.device)
         
         # apply softmax, dropout, and use value
         y = self.dropout(F.softmax(dot_product / math.sqrt(D // H), dim=-1)) @ value

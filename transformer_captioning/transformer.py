@@ -40,9 +40,10 @@ class AttentionLayer(nn.Module):
             # convert att_mask which is multiplicative, to an additive mask
             # Hint : If mask[i,j] = 0, we want softmax(QKT[i,j] + additive_mask[i,j]) to be 0
             # Think about what inputs make softmax 0.
-            additive_mask = torch.zeros(attn_mask.shape)
+            attn_mask = attn_mask.to(dot_product.device)
+            additive_mask = torch.zeros(attn_mask.shape).to(dot_product.device)
             additive_mask = additive_mask.masked_fill(attn_mask, -torch.inf)
-            dot_product += additive_mask.to(dot_product.device)
+            dot_product += additive_mask
         
         # apply softmax, dropout, and use value
         y = self.dropout(F.softmax(dot_product / math.sqrt(D), dim=-1)) @ value
@@ -81,9 +82,10 @@ class MultiHeadAttentionLayer(AttentionLayer):
             # convert att_mask which is multiplicative, to an additive mask
             # Hint : If mask[i,j] = 0, we want softmax(QKT[i,j] + additive_mask[i,j]) to be 0
             # Think about what inputs make softmax 0.
-            additive_mask = torch.zeros(attn_mask.shape)
+            attn_mask = attn_mask.to(dot_product.device)
+            additive_mask = torch.zeros(attn_mask.shape).to(dot_product.device)
             additive_mask = additive_mask.masked_fill(attn_mask, -torch.inf)
-            dot_product += additive_mask.to(dot_product.device)
+            dot_product += additive_mask
         
         # apply softmax, dropout, and use value
         y = self.dropout(F.softmax(dot_product / math.sqrt(D // H), dim=-1)) @ value
